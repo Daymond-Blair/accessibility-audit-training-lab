@@ -1,6 +1,7 @@
 "use strict";
 
 const SELECTED_KEY = "a11y-audit-lab:selected";
+const THEME_KEY = "a11y-audit-lab:theme";
 const storageKey = (id) => `a11y-audit-lab:${id}`;
 
 const $ = (id) => document.getElementById(id);
@@ -38,6 +39,7 @@ const els = {
   identifiedList: $("identified-list"),
   missedList: $("missed-list"),
   resetBtn: $("reset-btn"),
+  themeBtn: $("theme-btn"),
   announcer: $("announcer"),
   corrected: $("corrected-link"),
 };
@@ -554,7 +556,36 @@ function showLoadError(err) {
 
 /* ---------- Init ---------- */
 
+/* ---------- Theme ---------- */
+
+function currentTheme() {
+  const set = document.documentElement.dataset.theme;
+  if (set) return set;
+  return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function renderThemeButton() {
+  const next = currentTheme() === "dark" ? "light" : "dark";
+  els.themeBtn.textContent = `Switch to ${next} theme`;
+}
+
+function toggleTheme() {
+  const next = currentTheme() === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try {
+    localStorage.setItem(THEME_KEY, next);
+  } catch (e) {
+    // Storage blocked: the theme still applies for this visit.
+  }
+  renderThemeButton();
+  announce(`${next === "dark" ? "Dark" : "Light"} theme on.`);
+}
+
 async function init() {
+  els.themeBtn.addEventListener("click", toggleTheme);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderThemeButton);
+  renderThemeButton();
+  els.themeBtn.hidden = false;
   els.form.addEventListener("submit", handleSubmitFinding);
   els.cancelBtn.addEventListener("click", cancelEdit);
   els.wcag.addEventListener("change", renderCriterionHelp);

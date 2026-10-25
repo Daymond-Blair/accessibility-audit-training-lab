@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Accessibility Audit Training Lab</title>
   <meta name="description" content="Practice WCAG 2.2 accessibility audits against pages with known, intentionally injected violations.">
+  <script>
+    try {
+      const theme = localStorage.getItem("a11y-audit-lab:theme");
+      if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
   <link rel="stylesheet" href="css/app.css">
   <script src="scenarios/shared/attempt-engine.js" defer></script>
   <script src="js/app.js" defer></script>
@@ -14,15 +23,23 @@
 
   <header class="app-header">
     <div class="wrap header-inner">
-      <p class="brand"><span class="brand-mark" aria-hidden="true">A11y</span> Audit Training Lab</p>
-      <button type="button" class="btn btn-ghost" id="reset-btn">New attempt</button>
+      <p class="brand">Accessibility Audit Training Lab</p>
+      <div class="header-actions">
+        <button type="button" class="btn btn-ghost" id="theme-btn" hidden>Switch theme</button>
+        <button type="button" class="btn btn-ghost" id="reset-btn">New attempt</button>
+      </div>
     </div>
   </header>
 
   <main id="main" tabindex="-1">
+    <div class="hero">
+      <div class="wrap">
+        <h1>Accessibility audit</h1>
+        <p class="intro">Open the audit site in a new tab, test it with your usual tools, and log each WCAG 2.2 Level A or AA failure you find. When you submit, the answer key is revealed so you can compare your results.</p>
+      </div>
+    </div>
+
     <div class="wrap">
-      <h1>Accessibility audit</h1>
-      <p class="intro">Open the audit site in a new tab, test it with your usual tools, and log each WCAG 2.2 Level A or AA failure you find. When you submit, the answer key is revealed so you can compare your results.</p>
 
       <noscript><p class="notice">This training app needs JavaScript. The audit site itself works without it.</p></noscript>
       <p class="notice notice-error" id="load-error" hidden></p>
