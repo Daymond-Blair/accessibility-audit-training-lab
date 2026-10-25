@@ -2,6 +2,8 @@
 
 A practice environment for WCAG 2.2 conformance audits. You audit a realistic web page with known, intentionally injected Level A/AA violations, document what you find, and then compare your report against an answer key to see exactly what you caught and what you missed.
 
+**Try it:** <https://daymond-blair.github.io/accessibility-audit-training-lab/>. Select **See a sample audit** to see a finished, scored audit in one click.
+
 Built with vanilla HTML, CSS and JavaScript. No frameworks, build step or backend.
 
 ## Why this exists
@@ -65,6 +67,10 @@ This matters in accessibility work in particular. AI-generated code often introd
 3. **Submit.** Your findings are locked and the answer key for this attempt is revealed, along with a link to the corrected page for side-by-side comparison.
 4. **Score.** Tick each known violation you identified. Findings that cite the same or a related criterion are suggested as possible matches. The score, identified list and missed list update as you go.
 5. **New attempt** clears the current scenario's findings and picks a new set of defects.
+
+**Just looking?** Select **See a sample audit** at the top of the app. It shows a finished audit of the current scenario, with example findings, a score and the answer key, including links to the page as audited and the corrected page. The sample is never saved and doesn't affect your own audit.
+
+The app has light and dark themes. It follows your system setting until you pick one with the theme button in the header, and then it remembers your choice.
 
 ### Randomized defects
 
@@ -134,7 +140,8 @@ Each page in `scenarios/` is built correctly, and its `script.js` breaks it on p
 The app loads JSON with `fetch`, so it must be served over HTTP. Opening `index.html` directly from disk will not work.
 
 ```bash
-cd a11y_a11y
+git clone https://github.com/Daymond-Blair/accessibility-audit-training-lab.git
+cd accessibility-audit-training-lab
 python3 -m http.server 8000
 ```
 
@@ -185,7 +192,7 @@ All paths in the project are relative, so it works from that sub-folder URL.
 **Drag and drop (fastest):**
 1. Sign in at <https://app.netlify.com>.
 2. Go to **Sites → Add new site → Deploy manually**.
-3. Drag the `a11y_a11y` folder onto the upload area.
+3. Drag the project folder onto the upload area.
 
 **From a Git repository (auto-deploys on push):**
 1. Push the project to GitHub, GitLab or Bitbucket.
