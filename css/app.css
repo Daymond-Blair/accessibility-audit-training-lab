@@ -97,7 +97,7 @@
 
 body {
   margin: 0;
-  font-family: "Atkinson Hyperlegible", "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "Noto Sans", "Atkinson Hyperlegible", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1rem;
   line-height: 1.55;
   color: var(--text);
@@ -252,6 +252,11 @@ h2,
 h3,
 h4 {
   color: var(--heading);
+  font-weight: 700;
+}
+
+h1 {
+  letter-spacing: -0.02em;
 }
 
 h2 {
@@ -259,7 +264,7 @@ h2 {
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.25;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 
 /* Short accent bar under each section heading */
