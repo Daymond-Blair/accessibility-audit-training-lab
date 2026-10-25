@@ -24,18 +24,20 @@
   <header class="app-header">
     <div class="wrap header-inner">
       <p class="brand">Accessibility Audit Training Lab</p>
-      <div class="header-actions">
-        <button type="button" class="btn btn-ghost" id="theme-btn" hidden>Switch theme</button>
-        <button type="button" class="btn btn-ghost" id="reset-btn">New attempt</button>
-      </div>
+      <button type="button" class="btn btn-ghost" id="theme-btn" hidden>Switch theme</button>
     </div>
   </header>
 
   <main id="main" tabindex="-1">
     <div class="hero">
       <div class="wrap">
-        <h1>Accessibility audit</h1>
-        <p class="intro">Open the audit site in a new tab, test it with your usual tools, and log each WCAG 2.2 Level A or AA failure you find. When you submit, the answer key is revealed so you can compare your results.</p>
+        <h1>Practice accessibility audits against a known answer key</h1>
+        <p class="intro">Audit realistic web pages seeded with WCAG 2.2 Level A and AA failures, log what you find, then see exactly what you caught and what you missed.</p>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-hero" id="sample-btn">See a sample audit</button>
+          <a class="btn btn-hero-secondary" href="#scenarios-heading">Start your own audit</a>
+        </div>
+        <p class="byline">Built by Daymond Blair · <a href="https://github.com/Daymond-Blair">GitHub</a> · <a href="https://www.linkedin.com/in/daymond-blair/">LinkedIn</a></p>
       </div>
     </div>
 
@@ -43,6 +45,16 @@
 
       <noscript><p class="notice">This training app needs JavaScript. The audit site itself works without it.</p></noscript>
       <p class="notice notice-error" id="load-error" hidden></p>
+
+      <section class="panel" aria-labelledby="how-heading">
+        <h2 id="how-heading">How it works</h2>
+        <ol class="steps" role="list">
+          <li><p><strong>Launch</strong> Pick a scenario and open its page in a new tab.</p></li>
+          <li><p><strong>Test and log</strong> Use a keyboard, screen reader and your usual tools, and log each failure you find.</p></li>
+          <li><p><strong>Submit</strong> Lock your findings and reveal the answer key.</p></li>
+          <li><p><strong>Compare</strong> Mark what you caught and see how to find and fix what you missed.</p></li>
+        </ol>
+      </section>
 
       <section class="panel" aria-labelledby="scenarios-heading">
         <h2 id="scenarios-heading">Audit scenarios</h2>
@@ -61,10 +73,13 @@
         <p id="scenario-summary"></p>
         <dl class="meta" id="scenario-meta"></dl>
         <p id="scenario-scope" class="muted"></p>
-        <a class="btn btn-primary" id="launch-link" href="#" target="_blank" rel="noopener">
-          Launch audit site<span class="visually-hidden"> (opens in a new tab)</span>
-          <svg class="icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3H3v10h10v-3M9 2h5v5M14 2L7 9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-        </a>
+        <div class="scenario-actions">
+          <a class="btn btn-primary" id="launch-link" href="#" target="_blank" rel="noopener">
+            Launch audit site<span class="visually-hidden"> (opens in a new tab)</span>
+            <svg class="icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3H3v10h10v-3M9 2h5v5M14 2L7 9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          </a>
+          <button type="button" class="btn btn-secondary" id="reset-btn">New attempt</button>
+        </div>
       </section>
 
       <div class="workspace">
@@ -130,6 +145,10 @@
 
       <section class="panel results" id="results" aria-labelledby="results-heading" hidden>
         <h2 id="results-heading" tabindex="-1">Results</h2>
+        <div class="notice sample-notice" id="sample-notice" hidden>
+          <p>This is a sample audit: example findings for this scenario, scored against its answer key. Nothing here is saved, and your own audit is untouched.</p>
+          <button type="button" class="btn btn-secondary btn-small" id="exit-sample-btn">Exit sample</button>
+        </div>
         <div class="score" id="score" aria-live="polite" aria-atomic="true"></div>
         <p>For each known violation below, compare it with your findings and tick the box if you identified it. Your findings that cite the same criterion are listed as possible matches.</p>
         <p><a id="corrected-link" href="#" target="_blank" rel="noopener">Open the corrected page<span class="visually-hidden"> (opens in a new tab)</span></a> to compare it with the version you audited.</p>

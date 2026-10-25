@@ -144,6 +144,22 @@ function contrastScan(w, label) {
     d.getElementById("save-btn").click();
     contrastScan(w, "app form with details");
     await runAxe(w, "app form view");
+
+    // Sample audit: shows a finished audit without touching the saved one
+    const savedBefore = localStorage.getItem("a11y-audit-lab:fernhill");
+    d.getElementById("sample-btn").click();
+    log(await until(() => !d.getElementById("results").hidden), "sample shows results");
+    log(d.querySelectorAll("#findings-list > li").length === 7 && d.getElementById("score").textContent.startsWith("7 of 10"), "sample has 7 findings, 7 of 10 found");
+    log(!d.getElementById("sample-notice").hidden && d.getElementById("reset-btn").hidden, "sample notice shown, new attempt hidden");
+    log(d.activeElement === d.getElementById("results-heading"), "focus moves to results");
+    log(d.getElementById("launch-link").getAttribute("href").endsWith("attempt=SAMPLE"), "sample launch link uses fixed code");
+    d.getElementById("identified-" + d.querySelector("#answer-key > li").id.replace("violation-", "")).click();
+    log(localStorage.getItem("a11y-audit-lab:fernhill") === savedBefore, "sample never writes storage");
+    contrastScan(w, "app sample view");
+    await runAxe(w, "app sample view");
+    d.getElementById("exit-sample-btn").click();
+    log(d.getElementById("results").hidden && d.querySelectorAll("#findings-list > li").length === 1 && !d.getElementById("reset-btn").hidden, "exit sample restores own audit");
+    log(d.activeElement === d.getElementById("scenario-title"), "exit sample moves focus to scenario");
   } catch (e) {
     log(false, `harness exception: ${e.stack}`);
   }

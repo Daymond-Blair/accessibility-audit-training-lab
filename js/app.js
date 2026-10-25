@@ -2,6 +2,9 @@
 
 const SELECTED_KEY = "a11y-audit-lab:selected";
 const THEME_KEY = "a11y-audit-lab:theme";
+// Fixed code so the sample always shows the same defects and its launch link matches.
+const SAMPLE_ATTEMPT = "SAMPLE";
+const SAMPLE_CAUGHT = 7;
 const storageKey = (id) => `a11y-audit-lab:${id}`;
 
 const $ = (id) => document.getElementById(id);
@@ -40,6 +43,9 @@ const els = {
   missedList: $("missed-list"),
   resetBtn: $("reset-btn"),
   themeBtn: $("theme-btn"),
+  sampleBtn: $("sample-btn"),
+  sampleNotice: $("sample-notice"),
+  exitSampleBtn: $("exit-sample-btn"),
   announcer: $("announcer"),
   corrected: $("corrected-link"),
 };
@@ -50,6 +56,8 @@ let attempt = null;
 let criteria = new Map();
 const answerKeys = new Map();
 let editingId = null;
+// While true, state holds the sample audit and is never written to storage.
+let sampleMode = false;
 let state = { attempt: "", findings: [], submitted: false, identified: [] };
 
 /* ---------- State ---------- */
@@ -73,6 +81,7 @@ function loadState(id) {
 }
 
 function saveState() {
+  if (sampleMode) return;
   try {
     localStorage.setItem(storageKey(scenario.id), JSON.stringify(state));
   } catch (err) {
@@ -178,6 +187,7 @@ async function selectScenario(id, fromUser = false) {
     showLoadError(err);
     return;
   }
+  sampleMode = false;
   scenario = next;
   attempt = A11yAttempt.get(scenario.id);
   state = loadState(scenario.id);
@@ -417,10 +427,15 @@ function deleteFinding(id) {
 
 function renderAuditState() {
   const { submitted, findings } = state;
-  els.auditState.textContent = submitted ? "Submitted" : `In progress · ${findings.length} logged`;
+  els.auditState.textContent = sampleMode ? "Sample audit" : submitted ? "Submitted" : `In progress · ${findings.length} logged`;
   els.auditState.classList.toggle("is-submitted", submitted);
   els.form.hidden = submitted;
   els.formLocked.hidden = !submitted;
+  els.formLocked.textContent = sampleMode
+    ? "This is a sample audit, so findings are read-only. Exit the sample to return to your own audit."
+    : "This audit has been submitted, so findings are read-only. Start a new attempt to audit again.";
+  els.sampleNotice.hidden = !sampleMode;
+  els.resetBtn.hidden = sampleMode;
   els.formHeading.textContent = submitted ? "Findings locked" : els.formHeading.textContent;
   els.submitPanel.hidden = submitted;
   els.results.hidden = !submitted;
@@ -531,6 +546,45 @@ function renderScore() {
   els.missedList.replaceChildren(...(missed.length ? missed.map(item) : [el("li", { text: "None. Every known violation identified." })]));
 }
 
+/* ---------- Sample audit ---------- */
+
+// Shows a finished audit for the current scenario, built from its answer key,
+// so a visitor can see the whole loop without testing anything.
+async function showSample() {
+  if (!scenario) return;
+  try {
+    await loadAnswerKey();
+  } catch (err) {
+    showLoadError(err);
+    return;
+  }
+  sampleMode = true;
+  resetForm();
+  state = { attempt: SAMPLE_ATTEMPT, findings: [], submitted: true, identified: [] };
+  const caught = activeViolations().slice(0, SAMPLE_CAUGHT);
+  state.findings = caught.map((v) => ({
+    id: `sample-${v.id}`,
+    location: v.element,
+    description: v.description,
+    steps: v.how_to_find,
+    fix: v.fix,
+    wcag: v.wcag,
+  }));
+  state.identified = caught.map((v) => v.id);
+  renderAll();
+  announce(`Sample audit of ${scenario.title} shown. Nothing is saved.`);
+  els.resultsHeading.focus();
+}
+
+function exitSample() {
+  sampleMode = false;
+  state = loadState(scenario.id);
+  resetForm();
+  renderAll();
+  announce("Sample closed. Your own audit is back.");
+  els.title.focus();
+}
+
 function resetAudit() {
   if (!window.confirm("Start a new attempt? All findings and results will be deleted, and the audit page will get a new set of defects.")) return;
   state = emptyState();
@@ -591,6 +645,8 @@ async function init() {
   els.wcag.addEventListener("change", renderCriterionHelp);
   els.submitBtn.addEventListener("click", submitAudit);
   els.resetBtn.addEventListener("click", resetAudit);
+  els.sampleBtn.addEventListener("click", showSample);
+  els.exitSampleBtn.addEventListener("click", exitSample);
   for (const input of [els.location, els.description]) {
     input.addEventListener("input", () => {
       if (input.getAttribute("aria-invalid") === "true" && input.value.trim()) setFieldError(input, "");
